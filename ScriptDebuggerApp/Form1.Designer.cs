@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ScriptDebuggerApp
 {
-    partial class Form1
+    sealed partial class Form1
     {
         /// <summary>
         ///  Required designer variable.

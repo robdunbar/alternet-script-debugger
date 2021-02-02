@@ -13,7 +13,7 @@ using Alternet.Syntax.Parsers.Roslyn;
 
 namespace ScriptDebuggerApp
 {
-    public partial class Form1 : Form
+    public sealed partial class Form1 : Form
     {
         private readonly string _sourceFile;
         private readonly string _pdbFile;
@@ -29,6 +29,8 @@ namespace ScriptDebuggerApp
         public Form1()
         {
             InitializeComponent();
+
+            Text = "ScriptDebuggerApp";
 
             // Setup layout
             SetupFormLayout();
