@@ -11,7 +11,7 @@ using Alternet.Scripter.Debugger;
 using Alternet.Scripter.Integration;
 using Alternet.Syntax.Parsers.Roslyn;
 
-namespace CoreFormsApp
+namespace ScriptDebuggerApp
 {
     public partial class Form1 : Form
     {
@@ -42,7 +42,7 @@ namespace CoreFormsApp
             
             // CS Parser
             _csParser = new CsParser();
-            _csParser.XmlScheme = Properties.Resources.csParser1_XmlScheme;
+            _csParser.XmlScheme = Properties.Resources.csParser_XmlScheme;
             
             // Set up debug editor
             _codeEditContainer.EditorRequested += EditorContainer_EditorRequested;
@@ -91,7 +91,7 @@ namespace CoreFormsApp
             }
         }
 
-        private void EditorContainer_EditorRequested(object? sender, DebugEditRequestedEventArgs e)
+        private void EditorContainer_EditorRequested(object sender, DebugEditRequestedEventArgs e)
         {
             var edit = new DebugCodeEdit();
             edit.LoadFile(e.FileName);

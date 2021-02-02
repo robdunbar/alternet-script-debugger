@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CoreFormsApp.Properties {
+namespace ScriptDebuggerApp.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CoreFormsApp.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CoreFormsApp.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ScriptDebuggerApp.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -77,9 +77,9 @@ namespace CoreFormsApp.Properties {
         ///      &lt;ForeColor&gt;ControlText&lt;/ForeColor&gt;
         ///    &lt;/Sty [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string csParser1_XmlScheme {
+        internal static string csParser_XmlScheme {
             get {
-                return ResourceManager.GetString("csParser1.XmlScheme", resourceCulture);
+                return ResourceManager.GetString("csParser.XmlScheme", resourceCulture);
             }
         }
     }
