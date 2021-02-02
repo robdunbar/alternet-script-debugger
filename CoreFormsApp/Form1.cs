@@ -34,25 +34,10 @@ namespace CoreFormsApp
         {
             InitializeComponent();
 
-            var btnAttachAndDebug = new Button()
-            {
-                Dock = DockStyle.Top,
-                Text = "Attach and Start Debugging"
-            };
-            btnAttachAndDebug.Click += BtnAttach_Click;
-            Controls.Add(btnAttachAndDebug);
+            // Add Buttons
+            AddButtons();
 
-            _txtProcessId = new TextBox
-            {
-                Dock = DockStyle.Top,
-                Text = "..."
-            };
-            Controls.Add(_txtProcessId);
-
-            FormClosing += Form1_FormClosing;
-
-
-
+            // Set up syntax highlighting and code completion backend
             _csParser = new CsParser(new CsSolution());
             _csParser.Repository.RegisterDefaultAssemblies(TechnologyEnvironment.System);
             // Workaround to initialize workspace before being displayed so that references can be added properly.
@@ -63,23 +48,15 @@ namespace CoreFormsApp
             csharpSource.Lexer = _csParser;
             csharpSource.HighlightReferences = true;
 
+            // Set up debug editor
             _editor = new DebugCodeEdit();
-            _debugger = new ScriptDebugger();
-            _debugger.GeneratedModulesPath = Path.Combine(_solutionDir, @"TestApp\bin\Debug\netcoreapp3.1");
-            _debugger.MyCodeModules = new string[]
-            {
-                Path.Combine(_debugger.GeneratedModulesPath, @"TestLib.dll")
-            };
-
-            _editor.Debugger = _debugger;
             _editor.Source = csharpSource;
             _editor.Dock = DockStyle.Fill;
             _editor.Gutter.Options |= GutterOptions.PaintLineNumbers;
-
             _editor.Spelling.SpellColor = Color.Navy;
             _editor.Outlining.AllowOutlining = true;
             _editor.DisplayLines.AllowHiddenLines = true;
-
+            
             Controls.Add(_editor);
 
             // Start up the TestApp that will run the TestLib's code.
@@ -87,36 +64,70 @@ namespace CoreFormsApp
             var testApp = Process.Start(testAppExe);
             _txtProcessId.Text = testApp.Id.ToString();
             System.Threading.Thread.Sleep(500);
+        }
 
-            // Simulate the real application's use of NO source code files.
+        private void BtnLoadScript_Click(object? sender, EventArgs e)
+        {
+            // Our application does not have source files or projects.
+            // Instead we receive only the text and an array of referenced DLLs.
+            var references = new string[0]; // Lets keep it simple to start with
             var scriptToLoad = Path.Combine(_solutionDir, @"TestLib\MyClass.cs");
             string scriptSource = File.ReadAllText(scriptToLoad);
             _editor.Text = scriptSource;
             _csParser.ReparseText();
-
-            // Simulate that the real application needs to compile the library itself and cannot use the ScriptRun object...
-            //_scriptRun = new ScriptRun(this.components);
-            //_scriptRun.ScriptLanguage = ScriptLanguage.CSharp;
-            //_scriptRun.ScriptMode = ScriptMode.Debug;
-            //_scriptRun.ScriptSource.WithDefaultReferences();
-            //_scriptRun.ScriptSource.FromScriptCode(ScriptText);
-
-            //var testLibDll = Path.Combine(_solutionDir, @"TestApp\bin\Debug\netcoreapp3.1\TestLib.dll");
-            //_scriptRun.ScriptHost.AssemblyFileName = testLibDll;
-            //_scriptRun.ScriptHost.ModulesDirectoryPath = Path.Combine(_solutionDir, @"TestApp\bin\Debug\netcoreapp3.1");
-            //_scriptRun.AssemblyKind = ScriptAssemblyKind.DynamicLibrary;
-            //_debugger.ScriptRun = _scriptRun;
         }
 
-        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void BtnSetupDebugger_Click(object sender, EventArgs e)
         {
-            await _debugger.StopDebuggingAsync();
+            // Set up debugger
+            _debugger = new ScriptDebugger();
+            _debugger.GeneratedModulesPath = Path.Combine(_solutionDir, @"TestApp\bin\Debug\netcoreapp3.1");
+            _debugger.MyCodeModules = new string[]
+                {
+                    Path.Combine(_debugger.GeneratedModulesPath, @"TestLib.dll")
+                };
+
+            _editor.Debugger = _debugger;
         }
 
         private async void BtnAttach_Click(object sender, EventArgs e)
         {
-            await _debugger.AttachToProcessAsync(int.Parse(_txtProcessId.Text));
+            await _debugger.AttachToProcessAsync(int.Parse(_txtProcessId.Text), new StartDebuggingOptions { MyCodeModules = new[] { "" } });
             _debugger.StartDebugging();
+        }
+
+        private void AddButtons()
+        {
+            var btnAttachAndDebug = new Button()
+                {
+                    Dock = DockStyle.Top,
+                    Text = "Attach and Start Debugging"
+                };
+            btnAttachAndDebug.Click += BtnAttach_Click;
+            Controls.Add(btnAttachAndDebug);
+
+            var btnSetupDebugger = new Button()
+                {
+                    Dock = DockStyle.Top,
+                    Text = "Set up Debugger"
+                };
+            btnSetupDebugger.Click += BtnSetupDebugger_Click;
+            Controls.Add(btnSetupDebugger);
+
+            var btnLoadScript = new Button()
+                {
+                    Dock = DockStyle.Top,
+                    Text = "Load Script"
+                };
+            btnLoadScript.Click += BtnLoadScript_Click;
+            Controls.Add(btnLoadScript);
+
+            _txtProcessId = new TextBox
+                {
+                    Dock = DockStyle.Top,
+                    Text = "..."
+                };
+            Controls.Add(_txtProcessId);
         }
     }
 }

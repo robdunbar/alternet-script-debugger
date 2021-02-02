@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +14,16 @@ namespace TestApp
         public Form1()
         {
             InitializeComponent();
+
+            var output = new TextBox
+                {
+                    Dock = DockStyle.Fill,
+                    ReadOnly = true,
+                    Multiline = true
+                };
+            Controls.Add(output);
+
+            Trace.Listeners.Add(new TextBoxWriter(output));
 
             var button = new Button
                 {
@@ -39,5 +46,37 @@ namespace TestApp
         {
             new MyClass().Execute();
         }
+    }
+
+    /// <summary>
+    /// Used to redirect Trace output to a TextBox.
+    /// </summary>
+    public class TextBoxWriter : TextWriterTraceListener
+    {
+        private readonly TextBox _textBox;
+
+        public TextBoxWriter(TextBox textBox)
+        {
+            _textBox = textBox;
+        }
+
+        #region Overrides of TextWriterTraceListener
+
+        /// <inheritdoc />
+        public override void WriteLine(string message)
+        {
+            base.WriteLine(message);
+            AddText(message + Environment.NewLine);
+        }
+
+        private void AddText(string message)
+        {
+            _textBox.BeginInvoke((Action)(() =>
+                                                 {
+                                                     _textBox.Text = message + _textBox.Text;
+                                                 }));
+        }
+
+        #endregion
     }
 }

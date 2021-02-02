@@ -10,17 +10,13 @@ namespace MyNamespace
     {
         private static int _count = 0;
 
-        public void Execute()
-        {
-            PerformNoOp();
-        }
-
-        private void PerformNoOp()
+        public string Execute()
         {
             Thread.Sleep(200);
-            
-            Console.WriteLine("Hello " + _count++);
-            Debug.WriteLine("Hello " + _count);
+
+            string message = "Hello " + _count++;
+            Trace.WriteLine(message);
+            return message;
         }
     }
 }
