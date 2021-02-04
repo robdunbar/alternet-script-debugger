@@ -80,16 +80,13 @@ namespace ScriptDebuggerApp
             {
                 if (_debugger.State == DebuggerState.Startup)
                     return;
-
-                _scriptRun.ScriptSource.FromScriptFile(_sourceFile);
-                _scriptRun.ScriptSource.WithDefaultReferences();
-                _scriptRun.ScriptSource.Imports.Clear();
-
+                
                 _debugger.GeneratedModulesPath = _buildDir;
-                _debugger.AttachToProcessAsync(_testAppProcess.Id, new StartDebuggingOptions
-                    {
-                        MyCodeModules = new[] { _dllFile }
-                    });
+                _debugger.AttachToProcessAsync(_testAppProcess.Id,
+                                               new StartDebuggingOptions
+                                                   {
+                                                       MyCodeModules = new[] { _dllFile }
+                                                   });
             }
         }
 
