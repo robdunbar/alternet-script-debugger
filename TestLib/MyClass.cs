@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using TestLib;
 
 namespace MyNamespace
 {
+    /// <summary>
+    /// My class that has a summary.
+    /// </summary>
     public class MyClass
     {
         private static int _count = 0;
 
+        /// <summary>
+        /// A method with a summary.
+        /// </summary>
+        /// <returns>A message.</returns>
         public string Execute()
         {
             Thread.Sleep(200);
-
-            SomeClassWithXmlDocs.SomeMethod("");
 
             string message = "Hello " + _count++;
             Trace.WriteLine(message);

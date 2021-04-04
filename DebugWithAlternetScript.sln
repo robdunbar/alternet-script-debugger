@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLib", "TestLib\TestLib.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptDebuggerApp", "ScriptDebuggerApp\ScriptDebuggerApp.csproj", "{89C53430-6681-4101-847F-D95B5A08CFCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeOtherLibrary", "SomeOtherLibrary\SomeOtherLibrary.csproj", "{FBF40316-4911-4E07-8B27-7A72B228A1C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{89C53430-6681-4101-847F-D95B5A08CFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89C53430-6681-4101-847F-D95B5A08CFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89C53430-6681-4101-847F-D95B5A08CFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF40316-4911-4E07-8B27-7A72B228A1C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF40316-4911-4E07-8B27-7A72B228A1C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF40316-4911-4E07-8B27-7A72B228A1C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF40316-4911-4E07-8B27-7A72B228A1C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
