@@ -1,5 +1,5 @@
 ﻿
-namespace TestApp
+namespace RuntimeServer
 {
     sealed partial class Form1
     {

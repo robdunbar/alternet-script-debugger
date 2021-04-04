@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TestApp
+namespace RuntimeServer
 {
     /// <summary>
     /// Used to redirect Trace output to a TextBox.
