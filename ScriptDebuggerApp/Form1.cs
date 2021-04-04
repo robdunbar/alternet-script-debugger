@@ -6,10 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Alternet.Common;
+using Alternet.Editor.TextSource;
 using Alternet.Scripter;
 using Alternet.Scripter.Debugger;
 using Alternet.Scripter.Integration;
 using Alternet.Syntax.Parsers.Roslyn;
+using Alternet.Syntax.Parsers.Roslyn.CodeCompletion;
 
 namespace ScriptDebuggerApp
 {
@@ -30,6 +33,7 @@ namespace ScriptDebuggerApp
         {
             InitializeComponent();
 
+            Load += Form1_Load;
             Text = "ScriptDebuggerApp";
 
             // Setup layout
@@ -43,9 +47,19 @@ namespace ScriptDebuggerApp
             _dllFile = Path.Combine(_buildDir, "TestLib.dll");
             
             // CS Parser
-            _csParser = new CsParser();
-            _csParser.XmlScheme = Properties.Resources.csParser_XmlScheme;
-            
+            _csParser = new CsParser(new CsSolution());
+            _csParser.Repository.RegisterDefaultAssemblies(TechnologyEnvironment.System);
+            // Workaround to initialize workspace before being displayed so that references can be added before load complete.
+            // See https://www.alternetsoft.com/ForumRetrieve.aspx?ForumID=4089&TopicID=68576
+            var workspace = _csParser.Repository.Solution.Workspace;
+
+            // Add reference to new dll.
+            _csParser.Repository.AddFileReference(_dllFile);
+
+            TextSource csharpSource = new TextSource();
+            csharpSource.Lexer = _csParser;
+            csharpSource.HighlightReferences = true;
+
             // Set up debug editor
             _codeEditContainer.EditorRequested += EditorContainer_EditorRequested;
             _codeEditContainer.TryActivateEditor(_sourceFile);
@@ -69,7 +83,12 @@ namespace ScriptDebuggerApp
             _testAppProcess = Process.Start(Path.Combine(_buildDir, "TestApp.exe"));
             FormClosed += (s, e) => { _testAppProcess.CloseMainWindow(); };
         }
-        
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            _csParser.ReparseText();
+        }
+
         private void BtnStartDebugging_Click(object sender, EventArgs e)
         {
             if(_debugger.IsStarted)

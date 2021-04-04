@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using TestLib;
 
 namespace MyNamespace
 {
@@ -13,7 +14,9 @@ namespace MyNamespace
         public string Execute()
         {
             Thread.Sleep(200);
-            
+
+            SomeClassWithXmlDocs.SomeMethod("");
+
             string message = "Hello " + _count++;
             Trace.WriteLine(message);
             return message;
