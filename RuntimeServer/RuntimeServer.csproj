@@ -6,8 +6,4 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TestLib\TestLib.csproj" />
-  </ItemGroup>
-
 </Project>
