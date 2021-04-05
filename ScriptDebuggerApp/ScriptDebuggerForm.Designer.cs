@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ScriptDebuggerApp
 {
-    sealed partial class Form1
+    sealed partial class ScriptDebuggerForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -35,7 +35,7 @@ namespace ScriptDebuggerApp
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.Text = "ScriptDebuggerForm";
         }
 
         #endregion

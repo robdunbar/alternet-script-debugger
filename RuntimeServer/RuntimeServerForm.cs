@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2021 Cognex Corporation. All Rights Reserved.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,55 +13,38 @@ using System.Windows.Forms;
 
 namespace RuntimeServer
 {
-    public sealed partial class Form1 : Form
+    public sealed partial class RuntimeServerForm : Form
     {
-        private FileInfo _logFile;
-        private CancellationTokenSource _ct;
-        private readonly string _solutionDir = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(Form1).Assembly.Location), @"..\..\..\.."));
-        private WeakReference _weakRefToContext;
+        private readonly string _solutionDir;
+        private readonly string _userScriptDll;
         private Func<string> _actionToRun;
+        private CancellationTokenSource _ct;
+        private FileInfo _logFile;
+        private WeakReference _weakRefToContext;
 
-        public Form1()
+        public RuntimeServerForm()
         {
             InitializeComponent();
 
-            Text = "TestApp";
-
             SetupLayout();
+
+            _solutionDir = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(RuntimeServerForm).Assembly.Location), @"..\..\..\.."));
+            _userScriptDll = Path.Combine(_solutionDir, @"UserScriptLib\bin\Debug\netcoreapp3.1\UserScriptLib.dll");
+
+            if (File.Exists(_userScriptDll))
+                CreatePluginContext();
         }
 
         private void BtnCompileScript_Click(object sender, EventArgs e)
         {
-            // If context already exists, then unload it.
-            // https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability
-            if (_weakRefToContext != null)
-            {
-                _actionToRun = null;
-
-                for (int i = 0; _weakRefToContext.IsAlive && (i < 10); i++)
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-
-                Debug.Assert(_weakRefToContext.IsAlive == false);
-                _weakRefToContext = null;
-            }
+            CleanupPluginContext();
 
             // Compile the script to a dll
             var projectFilePath = Path.Combine(_solutionDir, "UserScriptLib", "UserScriptLib.csproj");
             var compileProcess = Process.Start("dotnet", "build " + projectFilePath);
             compileProcess.WaitForExit();
 
-            // Create new context for the plugin to be loaded into.
-            var alc = new AssemblyLoadContext("PluginContext", isCollectible: true);
-            _weakRefToContext = new WeakReference(alc, trackResurrection: true);
-            var userScriptDll = Path.Combine(_solutionDir, @"UserScriptLib\bin\Debug\netcoreapp3.1\UserScriptLib.dll");
-            var userScriptAssembly = alc.LoadFromAssemblyPath(userScriptDll);
-            var typeToExecute = userScriptAssembly.GetTypes().FirstOrDefault(t => t.Name == "MyClass");
-            var methodToInvoke = typeToExecute.GetMethod("Execute");
-            var objectToActOn = Activator.CreateInstance(typeToExecute);
-            _actionToRun = () => methodToInvoke.Invoke(objectToActOn, null) as string;
+            CreatePluginContext();
         }
 
         private void BtnRunOnce_Click(object sender, EventArgs e)
@@ -97,6 +82,41 @@ namespace RuntimeServer
                 _ct = null;
                 button.Text = "Run Continuously";
             }
+        }
+
+        /// <summary>
+        /// If context already exists, then unload it.
+        /// </summary>
+        private void CleanupPluginContext()
+        {
+            // https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability
+            if (_weakRefToContext != null)
+            {
+                _actionToRun = null;
+
+                for (int i = 0; _weakRefToContext.IsAlive && (i < 10); i++)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+
+                Debug.Assert(_weakRefToContext.IsAlive == false);
+                _weakRefToContext = null;
+            }
+        }
+
+        /// <summary>
+        /// Create new context for the plugin to be loaded into.
+        /// </summary>
+        private void CreatePluginContext()
+        {
+            var alc = new AssemblyLoadContext("PluginContext", isCollectible: true);
+            _weakRefToContext = new WeakReference(alc, trackResurrection: true);
+            var userScriptAssembly = alc.LoadFromAssemblyPath(_userScriptDll);
+            var typeToExecute = userScriptAssembly.GetTypes().FirstOrDefault(t => t.Name == "MyClass");
+            var methodToInvoke = typeToExecute.GetMethod("Execute");
+            var objectToActOn = Activator.CreateInstance(typeToExecute);
+            _actionToRun = () => methodToInvoke.Invoke(objectToActOn, null) as string;
         }
 
         private void SetupLayout()

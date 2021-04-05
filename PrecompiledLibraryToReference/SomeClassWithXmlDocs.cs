@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SomeOtherLibrary
+namespace PrecompiledLibraryToReference
 {
     /// <summary>
     /// Test that the xml docs show up in alternet.

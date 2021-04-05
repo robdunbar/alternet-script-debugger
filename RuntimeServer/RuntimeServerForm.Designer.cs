@@ -1,7 +1,7 @@
 ﻿
 namespace RuntimeServer
 {
-    sealed partial class Form1
+    sealed partial class RuntimeServerForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -32,7 +32,7 @@ namespace RuntimeServer
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.Text = "RuntimeServerForm";
         }
 
         #endregion
