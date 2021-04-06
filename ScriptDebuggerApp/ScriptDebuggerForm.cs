@@ -68,19 +68,23 @@ namespace ScriptDebuggerApp
             _debuggerPanels.Debugger = _debugger;
             _debuggerUiController.Debugger = _debugger;
             _debuggerToolbar.Debugger = _debugger;
-            _debuggerToolbar.CommandsListener = new DefaultDebuggerUICommands(_debugger);
+            _debuggerToolbar.CommandsListener = new AutoAttachDebuggerUICommands(_debugger, _runtimeServerProcess.Id);
 
             // Set the editor to the source file
             _codeEditContainer.TryActivateEditor(PathHelper.UserScriptSourceFile);
         }
 
+        // TODO Fix add reference to get xml docs to load for intellisense.
         private void BtnAddRef_Click(object sender, EventArgs e)
         {
-            // Add reference to new dll.
             var assemblyLocation = PathHelper.PrecompiledLibraryToReferenceDll;
+            Debug.Assert(File.Exists(assemblyLocation));
+            Debug.Assert(File.Exists(Path.ChangeExtension(assemblyLocation, ".xml")));
 
+            // Add reference to new dll.
             _csParser.Repository.AddFileReference(assemblyLocation);
 
+            // Check that xml docs have loaded into roslyn
             foreach (var project in _csParser.Repository.Solution.Workspace.CurrentSolution.Projects)
             {
                 var metaRef = project.MetadataReferences.SingleOrDefault(mr => mr.Display == assemblyLocation);

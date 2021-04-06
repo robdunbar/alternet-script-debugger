@@ -21,7 +21,7 @@ namespace MyNamespace
         {
             Thread.Sleep(200);
 
-            string message = "Hello lasharn " + _count++;
+            string message = "Hello " + _count++;
             Trace.WriteLine(message);
             return message;
         }
